@@ -4,6 +4,7 @@ const router = express.Router();
 const User = require('../dbModels/userModel.js')
 const jwt = require('jsonwebtoken');
 
+// REGISTER USER
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -39,17 +40,22 @@ router.post('/register', async (req, res) => {
 
 })
 
+// LOGIN - provides JWT token.
 router.post('/login', async (req, res) => {
     const { email, password } = req.body
+    // validate required data
     if (!email || !password) {
         return res.status(400).json({message: "Email and Password required." })
     }
+    // get user
     const user = await User.findOne({
         email: req.body.email
     })
+    // if user / check PW
     if (!user || !user.comparePassword(password)) {
        return res.status(400).json({message: 'Authentication failed. Invalid user or password.'})
     }
+    // Here's the golden ticket.
     return res.json({ token: jwt.sign({ email: user.email, fullName: user.fullName, _id: user._id }, 'RESTFULAPIs') });
 })
 
