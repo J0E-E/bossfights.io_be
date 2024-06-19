@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const User = require("./dbModels/userModel.js");
 const userRoutes = require('./routes/userRoutes.js')
 const normalizeKeysMiddleware = require('./utils/nomalizeRequestKeys.js')
+const jwtMiddleware = require('./utils/jwtMiddleware.js')
 
 
 async function main() {
@@ -18,6 +19,7 @@ async function main() {
 
     // MIDDLEWARE
     app.use(express.json());
+    app.use(jwtMiddleware);
     app.use(normalizeKeysMiddleware) // this uses parsed JSON in req.body to normalise. Must go after .json()
 
     // API ROUTES.
