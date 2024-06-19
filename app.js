@@ -1,9 +1,9 @@
 const express = require('express')
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 
-const User = require("./dbModels/userModel.js");
 const userRoutes = require('./routes/userRoutes.js')
+const gameRoutes = require('./routes/gameRoutes.js')
+
 const normalizeKeysMiddleware = require('./utils/nomalizeRequestKeys.js')
 const jwtMiddleware = require('./utils/jwtMiddleware.js')
 
@@ -24,6 +24,7 @@ async function main() {
 
     // API ROUTES.
     app.use('/api/user', userRoutes)
+    app.use('/api/game', gameRoutes)
 
     app.listen(port, () => {
         console.log(`express: BossFights.io backend express app is now listening on port ${port}`)
