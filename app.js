@@ -6,6 +6,7 @@ const gameRoutes = require('./routes/gameRoutes.js')
 
 const normalizeKeysMiddleware = require('./utils/nomalizeRequestKeys.js')
 const jwtMiddleware = require('./utils/jwtMiddleware.js')
+const bodyParser = require("body-parser");
 
 
 async function main() {
@@ -18,7 +19,7 @@ async function main() {
     const port = process.env.PORT || 3000
 
     // MIDDLEWARE
-    app.use(express.json());
+    app.use(bodyParser.json());
     app.use(jwtMiddleware);
     app.use(normalizeKeysMiddleware) // this uses parsed JSON in req.body to normalise. Must go after .json()
 

@@ -11,11 +11,15 @@
   "license": "ISC",
   "description": "bossfights.io backend",
   "dependencies": {
+    "aws-sdk": "^2.1646.0",
     "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.7.0",
-    "mongoose": "^8.4.3"
+    "mongoose": "^8.4.3",
+    "multer": "^1.4.5-lts.1",
+    "uuidv4": "^6.2.13"
   }
 }

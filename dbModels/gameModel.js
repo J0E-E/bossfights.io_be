@@ -19,6 +19,10 @@ const gameSchema = new mongoose.Schema({
         type: String,
         required: [true, "Display name required."]
     },
+    image_url: {
+        type: String,
+        required: [true, "Image required."]
+    },
     abbreviation: {
         type: String,
         required: [true, "Abbreviation required."]
