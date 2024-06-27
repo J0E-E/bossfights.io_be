@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 const Game = require("./gameModel");
 
 const contributingVideoSchema = new mongoose.Schema({
+    video_id: {
+        type: String,
+        required: [true, "Video Id Required."],
+        unique: true
+    },
     author_name: {
         type: String,
         required: [true, "Author name required."]
@@ -16,7 +21,15 @@ const contributingVideoSchema = new mongoose.Schema({
     },
     video_transcript: {
         type: String,
-        required: [true, "Video transcript required."]
+    },
+    video_thumbnail_image_url: {
+        type: String,
+        required: [true, "Video thumbnail required."]
+    },
+    do_not_use: {
+        type: Boolean,
+        required: true,
+        default: false,
     }
 })
 
@@ -44,7 +57,7 @@ const bossSchema = new mongoose.Schema({
     },
     display_name_short: {
         type: String,
-        required: [true, "Image required."]
+        required: [true, "Short display name required."]
     },
     contributing_videos: {
         type: [contributingVideoSchema],
@@ -52,6 +65,10 @@ const bossSchema = new mongoose.Schema({
     },
     strategy: {
         type: strategySchema,
+    },
+    image_url: {
+        type: String,
+        required: [true, "Image required."]
     },
     game_id: {
         type: mongoose.Schema.Types.ObjectId,
