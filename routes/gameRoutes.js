@@ -16,7 +16,7 @@ const s3 = new AWS.S3({
 })
 
 // GET ALL GAMES
-router.use(authenticator).get("/", async (req, res) => {
+router.get("/", async (req, res) => {
     const games = await Game.find({})
         .catch((error) => {
             console.log("FUCK!")
@@ -39,7 +39,7 @@ router.use(authenticator).get("/", async (req, res) => {
 })
 
 // GET GAME BY ID
-router.use(authenticator).get("/:id/", async (req, res) => {
+router.get("/:id/", async (req, res) => {
     const game = await Game.findOne({_id: req.params.id})
         .catch((error) => {
             console.log("FUCK!")

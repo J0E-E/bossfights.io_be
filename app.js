@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require("mongoose");
+const cors = require('cors');
 
 const userRoutes = require('./routes/userRoutes.js')
 const gameRoutes = require('./routes/gameRoutes.js')
@@ -20,6 +21,7 @@ async function main() {
     const port = process.env.PORT || 3000
 
     // MIDDLEWARE
+    app.use(cors())
     app.use(bodyParser.json());
     app.use(jwtMiddleware);
     app.use(normalizeKeysMiddleware) // this uses parsed JSON in req.body to normalise. Must go after .json()

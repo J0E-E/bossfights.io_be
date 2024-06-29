@@ -37,13 +37,19 @@ const contributingVideoSchema = new mongoose.Schema({
 })
 
 const strategySchema = new mongoose.Schema({
+    difficulty: {
+        type: String,
+        required: [true, "Difficulty required."]
+    },
     strategy_summary: {
         type: String,
-        required: [true, "Strategy required"]
     },
     strategy_summary_date: {
         type: Date,
-        required: [true, "Strategy date required."]
+    },
+    contributing_videos: {
+        type: [contributingVideoSchema],
+        default: []
     },
 })
 
@@ -66,16 +72,8 @@ const bossSchema = new mongoose.Schema({
         type: String,
         required: [true, "Boss type required."]
     },
-    difficulty: {
-        type: String,
-        required: [true, "Difficulty required."]
-    },
-    contributing_videos: {
-        type: [contributingVideoSchema],
-        default: []
-    },
-    strategy: {
-        type: strategySchema,
+    strategies: {
+        type: [strategySchema],
     },
     image_url: {
         type: String,
