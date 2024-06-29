@@ -30,6 +30,9 @@ const contributingVideoSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false,
+    },
+    transcript_succeeded: {
+        type: Boolean,
     }
 })
 
@@ -59,6 +62,14 @@ const bossSchema = new mongoose.Schema({
         type: String,
         required: [true, "Short display name required."]
     },
+    boss_type: {
+        type: String,
+        required: [true, "Boss type required."]
+    },
+    difficulty: {
+        type: String,
+        required: [true, "Difficulty required."]
+    },
     contributing_videos: {
         type: [contributingVideoSchema],
         default: []
@@ -75,7 +86,7 @@ const bossSchema = new mongoose.Schema({
         ref: 'Game',
         required: [true, "GameID required."],
         validate: {
-            validator: async (game_id) =>{
+            validator: async (game_id) => {
                 const gameExists = await Game.findById(game_id);
                 return gameExists !== null;
             },
@@ -83,20 +94,6 @@ const bossSchema = new mongoose.Schema({
         }
     }
 })
-
-// bossSchema.pre('save', async (next) => {
-//     const boss = this;
-//     try {
-//         const gameExists = await Game.findById(boss.game_id);
-//         if (!gameExists) {
-//             throw new Error("Invalid game ID.")
-//         }
-//         next();
-//     }
-//     catch (error) {
-//         next(error)
-//     }
-// })
 
 const Boss = mongoose.model('Boss', bossSchema);
 
