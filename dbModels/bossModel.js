@@ -4,8 +4,7 @@ const Game = require("./gameModel");
 const contributingVideoSchema = new mongoose.Schema({
     video_id: {
         type: String,
-        required: [true, "Video Id Required."],
-        unique: true
+        required: [true, "Video Id Required."]
     },
     author_name: {
         type: String,
@@ -90,6 +89,10 @@ const bossSchema = new mongoose.Schema({
             },
             message: "Invalid game ID."
         }
+    },
+    updated_at: {
+        type: Date,
+        required: false
     }
 })
 

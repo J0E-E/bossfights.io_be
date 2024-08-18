@@ -10,6 +10,7 @@ const get_gpt_summary = require("../utils/gptSummarizer.js");
 const Game = require("../dbModels/gameModel.js");
 const lodash = require('lodash');
 const s3_image_uploader = require("../utils/s3ImageUploader");
+const e = require("express");
 
 // GET ALL BOSSES for game
 router.get("/", async (req, res) => {
@@ -18,6 +19,35 @@ router.get("/", async (req, res) => {
     console.log(bosses)
     res.status(200).json(bosses)
 })
+
+// GET LATEST ADDED BOSSES
+router.get('/latest/', async (req, res) => {
+    let latestBosses = []
+    const bosses = await Boss.find({}).populate('game_id').sort({ updated_at: -1 })
+    const slicedBosses = bosses.slice(0,5)
+    slicedBosses.forEach((boss) => {
+        const bossJSON = boss.toJSON()
+        bossJSON.game_icon_url = boss.game_id.image_url
+        latestBosses.push(bossJSON)
+    })
+    res.status(200).json({bosses: latestBosses})
+})
+
+// Migrate DB with new field
+// router.use(authenticator).post('/migrate/', async (req, res) => {
+//     try {
+//         await Boss.updateMany(
+//             {updated_at: {$exists: true}},
+//             {$set: {updated_at: null}}
+//         )
+//     }
+//     catch (error) {
+//         res.status(500).json({error: error})
+//     }
+//
+//     console.log('All existing documents updated!');
+//     res.status(200).json({message: "All existing documents updated!"})
+// })
 
 // GET BOSS DETAILS
 router.get("/:id/", async (req, res) => {
@@ -169,7 +199,7 @@ router.use(authenticator).post('/:boss_id/:strategy_id/trigger_set_transcripts/'
     }
 
     // TODO - REVISIT THIS SHIT LATER. MAY WANT TO BUILD AN API TO TRIGGER PER VIDEO.
-    const delayTime = 25000
+    const delayTime = 60000
     for (const video of videos) {
         // ignore the video if set to DO_NOT_USE
         if (video.do_not_use) {
@@ -183,22 +213,18 @@ router.use(authenticator).post('/:boss_id/:strategy_id/trigger_set_transcripts/'
             const response = await get_youtube_transcript(youTubeURL)
             // handle an error on OPEN AI's end.
             if (response.errorMessage) {
-                console.log(response.errorMesage)
+                console.log(response.errorMessage)
                 video.transcript_succeeded = false
-                const endTime = new Date().getTime();
-                const runningTime = endTime - startTime
-                if (runningTime <= delayTime) {
-                    await new Promise((resolve) => setTimeout(resolve, delayTime - runningTime))
-                }
-                return res.status(500).json(JSON.parse(response.errorMessage))
+            } else {
+                // save transcript
+                video.video_transcript = response.body.transcript
+                video.transcript_succeeded = true
             }
-            // save transcript
-            video.video_transcript = response.body.transcript
-            video.transcript_succeeded = true
-            await video.save({suppressWarning: true})
         } catch (error) {
+            video.transcript_succeeded = false
             console.log(`FUCK, WHAT HAPPENED: ${error}`)
         }
+        await video.save({suppressWarning: true})
         const endTime = new Date().getTime();
         const runningTime = endTime - startTime
         if (runningTime <= delayTime) {
@@ -211,6 +237,7 @@ router.use(authenticator).post('/:boss_id/:strategy_id/trigger_set_transcripts/'
     res.status(200).json(boss)
 })
 
+// GET SUMMARY
 router.use(authenticator).post('/:boss_id/:strategy_id/trigger_set_summary/', async (req, res) => {
     const boss_id = req.params.boss_id;
     const strategy_id = req.params.strategy_id;
@@ -248,7 +275,7 @@ router.use(authenticator).post('/:boss_id/:strategy_id/trigger_set_summary/', as
 
         strategy.strategy_summary = response.body.summary
         strategy.strategy_summary_date = new Date()
-
+        boss.updated_at = new Date().toISOString()
         await boss.save()
         return res.status(200).json({boss: boss})
 
@@ -257,6 +284,5 @@ router.use(authenticator).post('/:boss_id/:strategy_id/trigger_set_summary/', as
         return res.status(500).json({error: error})
     }
 })
-
 
 module.exports = router;
