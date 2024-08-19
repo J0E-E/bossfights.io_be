@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14  # Specify your Node.js version here
+    commands:
+      - echo "Installing Node.js dependencies..."
+      - npm install
+
+  pre_build:
+    commands:
+      - echo "Running unit tests..."
+      - npm test  # Run your unit tests if you have any
+
+  build:
+    commands:
+      - echo "No build phase needed for this Node.js app"
+
+  post_build:
+    commands:
+      - echo "Build completed on `date`"
+      - echo "Preparing artifacts for deployment..."
+      - mkdir -p artifacts
+      - cp -r * artifacts/
+      - cd artifacts
+      - zip -r ../artifact.zip .
+
+artifacts:
+  files:
+    - artifact.zip
