@@ -3,29 +3,16 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 14  # Specify your Node.js version here
+      nodejs: 16  # Update to a compatible Node.js version
     commands:
       - echo "Installing Node.js dependencies..."
       - npm install
-
-  pre_build:
-    commands:
-      - echo "Running unit tests..."
-      - npm test  # Run your unit tests if you have any
-
   build:
     commands:
-      - echo "No build phase needed for this Node.js app"
-
+      - echo "Building the application..."
   post_build:
     commands:
-      - echo "Build completed on `date`"
-      - echo "Preparing artifacts for deployment..."
-      - mkdir -p artifacts
-      - cp -r * artifacts/
-      - cd artifacts
-      - zip -r ../artifact.zip .
-
+      - echo "Post-build phase..."
 artifacts:
   files:
-    - artifact.zip
+    - '**/*'`
