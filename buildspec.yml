@@ -2,17 +2,11 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 16  # Update to a compatible Node.js version
     commands:
-      - echo "Installing Node.js dependencies..."
       - npm install
   build:
     commands:
-      - echo "Building the application..."
-  post_build:
-    commands:
-      - echo "Post-build phase..."
+      - npm run build
 artifacts:
   files:
     - '**/*'
