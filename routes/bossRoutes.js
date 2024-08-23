@@ -11,6 +11,7 @@ const Game = require("../dbModels/gameModel.js");
 const lodash = require('lodash');
 const s3_image_uploader = require("../utils/s3ImageUploader");
 const e = require("express");
+const SiteMetaData = require("../dbModels/siteMetaDataModel");
 
 // GET ALL BOSSES for game
 router.get("/", async (req, res) => {
@@ -22,15 +23,24 @@ router.get("/", async (req, res) => {
 
 // GET LATEST ADDED BOSSES
 router.get('/latest/', async (req, res) => {
+    // get a rough estimate of page views
+
+    let siteMetaData = await SiteMetaData.findOne({})
+
+    if (process.env.ENVIRONMENT !== "development") {
+        siteMetaData.pageLoadCount++
+        await siteMetaData.save()
+    }
+
     let latestBosses = []
-    const bosses = await Boss.find({}).populate('game_id').sort({ updated_at: -1 })
-    const slicedBosses = bosses.slice(0,5)
+    const bosses = await Boss.find({}).populate('game_id').sort({updated_at: -1})
+    const slicedBosses = bosses.slice(0, 5)
     slicedBosses.forEach((boss) => {
         const bossJSON = boss.toJSON()
         bossJSON.game_icon_url = boss.game_id.image_url
         latestBosses.push(bossJSON)
     })
-    res.status(200).json({bosses: latestBosses})
+    res.status(200).json({bosses: latestBosses, pageLoadCount: siteMetaData ? siteMetaData.pageLoadCount : null})
 })
 
 // Migrate DB with new field

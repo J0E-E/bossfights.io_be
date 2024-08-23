@@ -9,6 +9,7 @@ const bossRoutes = require('./routes/bossRoutes.js')
 const normalizeKeysMiddleware = require('./utils/nomalizeRequestKeys.js')
 const jwtMiddleware = require('./utils/jwtMiddleware.js')
 const bodyParser = require("body-parser");
+const {getOrSetSiteMetaData} = require('./utils/siteMetaData.js')
 
 
 async function main() {
@@ -32,7 +33,8 @@ async function main() {
     app.use('/api/boss', bossRoutes)
 
     app.listen(port, () => {
-        console.log(`express: BossFights.io backend express app is now listening on port ${port}`)
+        getOrSetSiteMetaData();
+        console.log(`express: BossFights.io backend express app is now listening on port ${port}`);
     })
 }
 
